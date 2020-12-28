@@ -35,6 +35,14 @@ contract Decentragram {
     address payable author
   );
 
+    event ImageTipped(
+    uint id,
+    string hash,
+    string description,
+    uint tipAmount,
+    address payable author
+  );
+
 
   // Create Images
 
@@ -66,6 +74,9 @@ contract Decentragram {
   // memory = stored in function call
   // storage = on blockchain
   function tipImageOwner(uint _id) public payable {
+    // Make sure the id is valid
+    require(_id > 0 && _id <= imageCount);
+
     // Fetch the image - we're calling the Struct data type we made
     Image memory _image = images[_id];
 
@@ -76,5 +87,13 @@ contract Decentragram {
     // .transfer is a special Solidity function
     // msg.value = amount of eth sent when function is called
     address(_author).transfer(msg.value);
+
+    // Increment the tip amount
+    _image.tipAmount = _image.tipAmount + msg.value;
+
+    // Update the image
+    images[_id] = _image;
+
+    emit ImageTipped(_id, _image.hash, _image.description, _image.tipAmount, _author);
   }
 }
