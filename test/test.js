@@ -1,3 +1,5 @@
+const { assert } = require('chai');
+
 const Decentragram = artifacts.require('./Decentragram.sol');
 
 require('chai')
@@ -28,5 +30,50 @@ contract('Decentragram', ([deployer, author, tipper]) => {
 
   // Smart contract testing is particularly important because the blockchain is IMMUTABLE so we need to test to make sure that the contract works very well. It cannot be changed once it is deployed.
 
-  
+  describe('images', async () => {
+    let result, imageCount;
+    const hash = 'abc123';
+
+    before(async () => {
+      result = await decentragram.uploadImage(hash, 'Image description', {
+        from: author,
+      });
+      imageCount = await decentragram.imageCount();
+    });
+
+    it('creates images', async () => {
+      // SUCCESS
+      assert.equal(imageCount, 1);
+      const event = result.logs[0].args;
+      assert.equal(event.id.toNumber(), imageCount.toNumber(), 'id is correct');
+      assert.equal(event.hash, hash, 'Hash is correct');
+      assert.equal(
+        event.description,
+        'Image description',
+        'description is correct'
+      );
+      assert.equal(event.tipAmount, '0', 'tip amount is correct');
+      assert.equal(event.author, author, 'author is correct');
+
+      // FAILURE: Image must have hash
+      await decentragram.uploadImage('', 'Image description', { from: author })
+        .should.be.rejected;
+
+      // FAILURE: Image must have description
+      await decentragram.uploadImage('Image Hash', '', { from: author }).should
+        .be.rejected;
+    });
+    it('lists images', async () => {
+      const image = await decentragram.images(imageCount);
+      assert.equal(image.id.toNumber(), imageCount.toNumber(), 'id is correct');
+      assert.equal(image.hash, hash, 'Hash is correct');
+      assert.equal(
+        image.description,
+        'Image description',
+        'description is correct'
+      );
+      assert.equal(image.tipAmount, '0', 'tip amount is correct');
+      assert.equal(image.author, author, 'author is correct');
+    });
+  });
 });
