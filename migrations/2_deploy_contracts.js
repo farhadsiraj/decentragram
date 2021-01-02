@@ -9,7 +9,7 @@ module.exports = function(deployer) {
 // To deploy, in the terminal write truffle migrate --reset
 // To check deployment in terminal, write truffle console (this allows us to write JS commands on the blockchain and interact with it)
 
-// fetch Decentragram from the blockchain asynchronously
+// **fetch Decentragram from the blockchain asynchronously
 // decentragram = await Decentragram.deploy()
 
 // decentragram (will return the JS version of contract)
