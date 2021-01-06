@@ -14,7 +14,7 @@ contract Decentragram {
   uint public imageCount = 0;
   mapping(uint => Image) public images;
 
-  // Struct allows you to create your own datatype
+  // Struct allows us to create our own datatype
   // Like a row in a database, the variables are the columns
   struct Image {
     uint id;
